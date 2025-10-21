@@ -1,0 +1,111 @@
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    container_name: food_delivery_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-food_delivery}
+      POSTGRES_USER: ${POSTGRES_USER:-food_delivery_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - food_delivery_network
+    restart: unless-stopped
+
+  # Redis для кэширования
+  redis:
+    image: redis:7-alpine
+    container_name: food_delivery_redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - food_delivery_network
+    restart: unless-stopped
+
+  # API сервис
+  api:
+    build:
+      context: ./food-delivery-api
+      dockerfile: ./Dockerfile
+    container_name: food_delivery_api
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-food_delivery_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-food_delivery}
+      - REDIS_URL=redis://redis:6379
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-https://odostavka.online,https://admin.odostavka.online,https://api.odostavka.online}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - food_delivery_network
+    restart: unless-stopped
+
+  # Админка теперь размещается на Vercel
+  # admin:
+  #   build:
+  #     context: ./food-delivery-admin
+  #     dockerfile: ./Dockerfile
+  #   container_name: food_delivery_admin
+  #   environment:
+  #     - NODE_ENV=production
+  #     - NEXT_PUBLIC_API_URL=https://api.odostavka.online
+  #   networks:
+  #     - food_delivery_network
+  #   restart: unless-stopped
+
+  # Клиент
+  client:
+    image: node:20-alpine
+    container_name: food_delivery_client
+    working_dir: /app
+    command: sh -c "npm install && npm run build && npm start"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api.odostavka.online
+    volumes:
+      - ./food-delivery-client:/app
+    networks:
+      - food_delivery_network
+    restart: unless-stopped
+
+  # Nginx с Let's Encrypt
+  nginx:
+    image: nginx:alpine
+    container_name: food_delivery_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - api
+      - client
+    networks:
+      - food_delivery_network
+    restart: unless-stopped
+
+  # Certbot для Let's Encrypt
+  certbot:
+    image: certbot/certbot
+    container_name: food_delivery_certbot
+    volumes:
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email -d odostavka.online -d admin.odostavka.online -d api.odostavka.online
+    networks:
+      - food_delivery_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  certbot_certs:
+  certbot_www:
+
+networks:
+  food_delivery_network:
+    driver: bridge

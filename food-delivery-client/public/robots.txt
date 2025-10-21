@@ -1,0 +1,17 @@
+# Robots.txt для О.Доставка
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /profile
+Disallow: /settings
+Disallow: /checkout
+Disallow: /orders
+Disallow: /cart
+
+# Sitemap
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+

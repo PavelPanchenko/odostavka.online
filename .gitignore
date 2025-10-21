@@ -1,0 +1,41 @@
+# Node
+node_modules/
+npm-debug.log
+.next/
+out/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Builds
+dist/
+build/
+*.log
+.cache/
+
+# Env files
+.env
+.env.*
+!env.example
+
+# OS / Editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Database / Runtime
+*.sqlite3
+*.db
+*.pid
+*.sock
+
+# Certificates
+*.pem
+*.crt
+*.key
+
+# Alembic migrations cache
+alembic/versions/__pycache__/
