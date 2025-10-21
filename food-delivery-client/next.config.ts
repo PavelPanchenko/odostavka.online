@@ -2,10 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  },
+  images: {
+    domains: process.env.NEXT_PUBLIC_API_DOMAIN ? [process.env.NEXT_PUBLIC_API_DOMAIN] : ['localhost'],
+  },
   experimental: {
-    // @ts-ignore - allowedDevOrigins для ngrok
-    allowedDevOrigins: ['https://be36e5e456de.ngrok-free.app'],
-    outputFileTracingRoot: undefined,
+    // outputFileTracingRoot больше не поддерживается в новых версиях Next.js
   },
 };
 

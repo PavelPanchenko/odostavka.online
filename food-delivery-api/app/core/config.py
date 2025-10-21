@@ -24,22 +24,15 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     
-    # Robokassa (для тестирования)
-    # Тестовая среда с демо-магазином
-    robokassa_merchant_login: str = "demo"  # Тестовый магазин
-    robokassa_password1: str = "password_1"  # Пароль #1
-    robokassa_password2: str = "password_2"  # Пароль #2
-    robokassa_test_mode: bool = True  # Тестовый режим
-    robokassa_result_url: str = "http://localhost:8000/api/v1/payments/robokassa-result"  # URL для уведомлений
-    robokassa_success_url: str = "http://localhost:3000/orders"  # URL успешной оплаты
-    robokassa_fail_url: str = "http://localhost:3000/orders"  # URL отмены оплаты
     
-    # CORS
+    # CORS (настраивается через переменные окружения)
     allowed_origins: list[str] = [
-            "https://odostavka.online", 
-            "https://api.odostavka.online", 
-            "https://odostavka-admin.vercel.app"
-        ]    
+            "http://localhost:3000",  # Локальная разработка
+            "https://odostavka-admin.vercel.app"  # Админка на Vercel
+        ]
+    
+    # Дополнительные CORS origins из переменных окружения
+    additional_cors_origins: Optional[str] = None    
     # API настройки
     api_v1_prefix: str = "/api/v1"
 
@@ -61,6 +54,17 @@ class Settings(BaseSettings):
     telegram_client_bot_token: Optional[str] = None
     telegram_courier_bot_token: Optional[str] = None
     telegram_admin_bot_token: Optional[str] = None
+    
+    def get_allowed_origins(self) -> list[str]:
+        """Получить полный список разрешенных CORS origins"""
+        origins = self.allowed_origins.copy()
+        
+        # Добавляем дополнительные origins из переменных окружения
+        if self.additional_cors_origins:
+            additional_origins = [origin.strip() for origin in self.additional_cors_origins.split(',')]
+            origins.extend(additional_origins)
+        
+        return origins
     
     class Config:
         env_file = ".env"
