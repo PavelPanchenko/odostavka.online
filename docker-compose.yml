@@ -34,7 +34,6 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-food_delivery_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-food_delivery}
       - REDIS_URL=redis://redis:6379
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-https://odostavka.online,https://admin.odostavka.online,https://api.odostavka.online}
     depends_on:
       - postgres
       - redis
