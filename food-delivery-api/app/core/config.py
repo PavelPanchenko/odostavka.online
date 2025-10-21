@@ -35,8 +35,11 @@ class Settings(BaseSettings):
     robokassa_fail_url: str = "http://localhost:3000/orders"  # URL отмены оплаты
     
     # CORS
-    allowed_origins: list[str] = ["http://localhost:3000", "http://localhost:3001", "http://localhost:3004", "http://localhost:8080", "https://be36e5e456de.ngrok-free.app"]
-    
+    allowed_origins: list[str] = [
+            "https://odostavka.online", 
+            "https://api.odostavka.online", 
+            "https://odostavka-admin.vercel.app"
+        ]    
     # API настройки
     api_v1_prefix: str = "/api/v1"
 
