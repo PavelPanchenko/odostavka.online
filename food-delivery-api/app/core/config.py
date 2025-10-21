@@ -32,7 +32,8 @@ class Settings(BaseSettings):
         ]
     
     # Дополнительные CORS origins из переменных окружения
-    additional_cors_origins: Optional[str] = None    
+    additional_cors_origins: Optional[str] = None
+    # Альтернативное название: allowed_domains    
     # API настройки
     api_v1_prefix: str = "/api/v1"
 
