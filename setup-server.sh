@@ -9,7 +9,7 @@ echo "🚀 Настройка сервера для запуска контей�
 if [ ! -f "docker-compose-db-api.yml" ] || [ ! -d "food-delivery-api" ] || [ ! -d "food-delivery-client" ]; then
     echo "❌ Ошибка: Запустите скрипт в корневой папке проекта!"
     echo "📁 Структура должна быть:"
-    echo "   /path/to/project/"
+    echo "   /path/to/odostavka.online/"
     echo "   ├── docker-compose-db-api.yml"
     echo "   ├── docker-compose-all.yml"
     echo "   ├── food-delivery-api/"
@@ -18,7 +18,7 @@ if [ ! -f "docker-compose-db-api.yml" ] || [ ! -d "food-delivery-api" ] || [ ! -
     echo "   └── .env"
     echo ""
     echo "📋 Правильная команда:"
-    echo "   cd /path/to/project"
+    echo "   cd /path/to/odostavka.online"
     echo "   ./setup-server.sh"
     exit 1
 fi
